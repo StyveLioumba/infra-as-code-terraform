@@ -1,0 +1,48 @@
+trigger: none
+
+variables:
+  TF_VAR_LOCATION: 'northeurope'
+  ~#TF_LOG: TRACE
+
+stages:
+- stage: DeployInfra
+  jobs:
+  - job: DeployInfra
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: TerraformInstaller@0
+      displayName: Install Terraform
+
+    - task: TerraformCLI@0
+      displayName: 'check terraform version'
+      inputs:
+        command: version
+
+    - task: TerraformCLI@0
+      displayName: 'Terraform init'
+      inputs:
+        command: init
+        backendType: "azurerm"
+        backendServiceArm: "TFConnect"
+        ensureBackend: "false"
+        backendAzureRmResourceGroupName: "RG2"
+        backendAzureRmStorageAccountName: "remotestates"
+        backendAzureRmContainerName: "tfstate"
+        backendAzureRmKey: "terraform.tstate"
+
+    - task: TerraformCLI@0
+      displayName: 'Terraform validate'
+
+    - task: TerraformCLI@0
+      displayName: 'Terraform plan'
+      inputs:
+        command: plan
+        environmentServiceName: TFConnect
+        commandOptions: "-var-file=variables.tfvars"
+
+    - task: TerraformCLI@0
+      displayName: 'Terraform apply'
+      inputs:
+        command: apply
+        environmentServiceName: TFConnect
