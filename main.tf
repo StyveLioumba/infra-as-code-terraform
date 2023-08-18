@@ -7,12 +7,12 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    resource_group_name  = "rg2"
-    storage_account_name = "remotestates"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
+  # backend "azurerm" {
+    # resource_group_name  = "rg2"
+    # storage_account_name = "remotestates"
+    # container_name       = "tfstate"
+    # key                  = "terraform.tfstate"
+    #  } 
 }
 
 # cf. https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
